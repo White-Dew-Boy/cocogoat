@@ -30,6 +30,28 @@ jobs:
           target_sync_branch: main        # 你仓库的分支
           test_mode: false
 
+      # ========== 修复vLoading的导入问题 ==========
+      - name: Apply vLoading fix patch
+        run: |
+          PATCH_FILE=".github/patches/fix-vloading.patch"
+          
+          if [ -f "$PATCH_FILE" ]; then
+            echo "📦 Applying patch: $PATCH_FILE"
+            
+            # 先测试 patch 是否能应用
+            if patch -p1 --dry-run < "$PATCH_FILE" 2>/dev/null; then
+              patch -p1 < "$PATCH_FILE"
+              echo "✅ Patch applied successfully"
+            else
+              echo "⚠️ Patch failed, trying fallback sed command..."
+              find src -name "*.vue" -type f -exec sed -i 's/import { vLoading } from/import vLoading from/g' {} \;
+              echo "✅ Fallback applied"
+            fi
+          else
+            echo "⚠️ Patch file not found, trying sed fallback..."
+            find src -name "*.vue" -type f -exec sed -i 's/import { vLoading } from/import vLoading from/g' {} \;
+          fi
+
       # ========== 第3步：设置 Node.js ==========
       - name: Setup Node.js
         uses: actions/setup-node@v3
