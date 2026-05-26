@@ -33,7 +33,6 @@ jobs:
       # ========== 修复vLoading的导入问题 ==========
       - name: Apply vLoading fix patch
         run: |
-          PATCH_FILE=".github/patches/fix-vloading.patch"
           
           if [ -f "$PATCH_FILE" ]; then
             echo "📦 Applying patch: $PATCH_FILE"
