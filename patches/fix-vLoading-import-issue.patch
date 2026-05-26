@@ -20,8 +20,8 @@ index cfebd48..77eed12 100644
  import { library } from '@fortawesome/fontawesome-svg-core'
  import { faInbox } from '@fortawesome/free-solid-svg-icons'
  
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import fastq from 'fastq'
  import { useRoute } from 'vue-router'
@@ -33,8 +33,8 @@ index f8c600b..886b74a 100644
  import { library } from '@fortawesome/fontawesome-svg-core'
  import { faInbox } from '@fortawesome/free-solid-svg-icons'
  
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import fastq from 'fastq'
  import { useRoute } from 'vue-router'
@@ -46,8 +46,8 @@ index 8131117..93714a7 100644
  import { library } from '@fortawesome/fontawesome-svg-core'
  import { faInbox } from '@fortawesome/free-solid-svg-icons'
  
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import fastq from 'fastq'
  import { useRoute } from 'vue-router'
@@ -59,8 +59,8 @@ index 176603d..4fbdb2f 100644
  import { library } from '@fortawesome/fontawesome-svg-core'
  import { faInbox } from '@fortawesome/free-solid-svg-icons'
  
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import fastq from 'fastq'
  import { useRoute } from 'vue-router'
@@ -72,8 +72,8 @@ index a80fc1f..10a8c7c 100644
      faCalendarPlus,
      faHouseLaptop,
  )
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import 'element-plus/theme-chalk/el-notification.css'
  import { urls } from './urls'
@@ -85,8 +85,8 @@ index 36f3383..12dde88 100644
      faCalendarPlus,
      faHouseLaptop,
  )
--import vLoading from 'element-plus/es/components/loading/src/directive'
-+import vLoading from 'element-plus/es/components/loading/src/directive'
+-import { vLoading } from 'element-plus/es/components/loading/src/directive'
++import { vLoading } from 'element-plus/es/components/loading/src/directive'
  import 'element-plus/theme-chalk/el-loading.css'
  import 'element-plus/theme-chalk/el-notification.css'
  import { urls } from './urls'

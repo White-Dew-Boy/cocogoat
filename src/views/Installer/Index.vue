@@ -222,7 +222,7 @@ library.add(
     faCalendarPlus,
     faHouseLaptop,
 )
-import vLoading from 'element-plus/es/components/loading/src/directive'
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 import 'element-plus/theme-chalk/el-loading.css'
 import 'element-plus/theme-chalk/el-notification.css'
 import { urls } from './urls'
