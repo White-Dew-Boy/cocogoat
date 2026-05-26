@@ -76,7 +76,7 @@ import type { IAScannerData, IAScannerFaild } from '../scanner/scanner'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faInbox } from '@fortawesome/free-solid-svg-icons'
 
-import { vLoading } from 'element-plus/es/components/loading/src/directive'
+import vLoading from 'element-plus/es/components/loading/src/directive'
 import 'element-plus/theme-chalk/el-loading.css'
 import fastq from 'fastq'
 import { useRoute } from 'vue-router'
