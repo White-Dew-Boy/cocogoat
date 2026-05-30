@@ -72,7 +72,7 @@ jobs:
 #      - name: Check for A/B test
 #        run: ((git log -1 --pretty=%B | grep -F '[ab]' >/dev/null 2>&1) && rm ./distindex/index.json) || echo "This build will be published FULLY!!"
       - name: Deploy files
-        uses: easingthemes/ssh-deploy@main
+        uses: easingthemes/ssh-deploy@v5.1.1
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           ARGS: '-avz --delete'
