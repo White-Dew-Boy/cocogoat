@@ -1,0 +1,98 @@
+name: Build My Production
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 每天 UTC 0 点（北京时间 8 点）自动运行
+  workflow_dispatch:       # 允许手动触发
+
+permissions:
+  contents: write          # 用于推送同步后的代码
+
+jobs:
+  build:
+    env:
+      BUILD_TYPE: REL
+      SENTRY_URL: ${{ secrets.SENTRY_URL }}
+      SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Unpack git objects
+        run: |
+          mv .git/objects/pack .
+          git unpack-objects < pack/*.pack
+          rm -rf pack
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - uses: szenius/set-timezone@v1.1
+        with:
+          timezoneLinux: "Asia/Shanghai"
+          timezoneMacos: "Asia/Shanghai"
+          timezoneWindows: "China Standard Time"
+      - uses: pnpm/action-setup@v2
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - name: Build Check
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"red","title":{"content":"构建失败通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web构建失败，请检查错误信息","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cocogoat-web-report
+          path: dist/report.html
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: cocogoat-web
+          path: dist/
+      - name: Remove unused files
+        run: |
+          rm -rf dist/assets/*.wasm
+          rm -rf dist/assets/*.ort
+          rm -rf dist/index.html
+          rm -rf dist/report.html
+      - name: Keep index.json
+        run: mkdir distindex && mv dist/index.json ./distindex/index.json && cp distindex/index.json ./distindex/pre.json
+      - name: Check for A/B test
+        run: ((git log -1 --pretty=%B | grep -F '[ab]' >/dev/null 2>&1) && rm ./distindex/index.json) || echo "This build will be published FULLY!!"
+      - name: Deploy static files
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: '-avz --delete'
+          SOURCE: 'dist/'
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          REMOTE_USER: ${{ secrets.SERVER_USER }}
+          TARGET: ${{ secrets.SERVER_TARGET_PATH }}
+#      - name: Deploy Check
+#        if: failure()
+#        run: |
+#          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"red","title":{"content":"构建失败通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web构建成功但部署失败，请检查错误信息","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
+      - name: Deploy index.json
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: '-avz --delete'
+          SOURCE: 'distindex/'
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          REMOTE_USER: ${{ secrets.SERVER_USER }}
+          TARGET: ${{ secrets.SERVER_TARGET_PATH }}
+#      - name: Notification
+#        run: |
+#          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"turquoise","title":{"content":"构建成功通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web已构建并部署成功","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
