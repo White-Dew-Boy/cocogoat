@@ -10,10 +10,10 @@ permissions:
 
 jobs:
   build:
-    env:
-      BUILD_TYPE: REL
-      SENTRY_URL: ${{ secrets.SENTRY_URL }}
-      SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
+#    env:
+#      BUILD_TYPE: REL
+#      SENTRY_URL: ${{ secrets.SENTRY_URL }}
+#      SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -47,10 +47,10 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Build
         run: pnpm build
-      - name: Build Check
-        if: failure()
-        run: |
-          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"red","title":{"content":"构建失败通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web构建失败，请检查错误信息","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
+#      - name: Build Check
+#        if: failure()
+#        run: |
+#          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"red","title":{"content":"构建失败通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web构建失败，请检查错误信息","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
@@ -65,17 +65,17 @@ jobs:
         run: |
           rm -rf dist/assets/*.wasm
           rm -rf dist/assets/*.ort
-          rm -rf dist/index.html
-          rm -rf dist/report.html
-      - name: Keep index.json
-        run: mkdir distindex && mv dist/index.json ./distindex/index.json && cp distindex/index.json ./distindex/pre.json
-      - name: Check for A/B test
-        run: ((git log -1 --pretty=%B | grep -F '[ab]' >/dev/null 2>&1) && rm ./distindex/index.json) || echo "This build will be published FULLY!!"
+#          rm -rf dist/index.html
+#          rm -rf dist/report.html
+#      - name: Keep index.json
+#        run: mkdir distindex && mv dist/index.json ./distindex/index.json && cp distindex/index.json ./distindex/pre.json
+#      - name: Check for A/B test
+#        run: ((git log -1 --pretty=%B | grep -F '[ab]' >/dev/null 2>&1) && rm ./distindex/index.json) || echo "This build will be published FULLY!!"
       - name: Deploy static files
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: '-rlgoDIVz --delete'
+          ARGS: '-rlgoDIVz'
           SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.SERVER_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
@@ -84,15 +84,15 @@ jobs:
 #        if: failure()
 #        run: |
 #          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"red","title":{"content":"构建失败通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web构建成功但部署失败，请检查错误信息","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
-      - name: Deploy index.json
-        uses: easingthemes/ssh-deploy@v5.1.0
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: '-rlgoDIVz'
-          SOURCE: 'distindex/'
-          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-          REMOTE_USER: ${{ secrets.SERVER_USER }}
-          TARGET: ${{ secrets.SERVER_TARGET_PATH }}
+#      - name: Deploy index.json
+#        uses: easingthemes/ssh-deploy@v5.1.0
+#        with:
+#          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+#          ARGS: '-rlgoDIVz'
+#          SOURCE: 'distindex/'
+#          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+#          REMOTE_USER: ${{ secrets.SERVER_USER }}
+#          TARGET: ${{ secrets.SERVER_TARGET_PATH }}
 #      - name: Notification
 #        run: |
 #          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"interactive","card":{"config":{"wide_screen_mode":false},"header":{"template":"turquoise","title":{"content":"构建成功通知","tag":"plain_text"}},"elements":[{"tag":"div","text":{"content":"cocogoat-web已构建并部署成功","tag":"lark_md"}}]}}' ${{ secrets.FEISHU_WEBHOOK }}
