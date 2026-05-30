@@ -71,11 +71,11 @@ jobs:
 #        run: mkdir distindex && mv dist/index.json ./distindex/index.json && cp distindex/index.json ./distindex/pre.json
 #      - name: Check for A/B test
 #        run: ((git log -1 --pretty=%B | grep -F '[ab]' >/dev/null 2>&1) && rm ./distindex/index.json) || echo "This build will be published FULLY!!"
-      - name: Deploy static files
-        uses: easingthemes/ssh-deploy@v5.1.0
+      - name: Deploy files
+        uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          ARGS: '-rlgoDIVz'
+          ARGS: '-avz --delete'
           SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.SERVER_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
